@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Location">
+
+    <TextView
+        android:id="@+id/textview_location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        android:layout_marginTop="250dp"
+        android:layout_centerHorizontal="true"
+        />
+    <TextView
+        android:id="@+id/textview_Success"
+        android:layout_below="@id/textview_location"
+        android:layout_marginTop="30dp"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="TextView"
+        >
+
+    </TextView>
+    <LinearLayout
+        android:id="@+id/ButtonLayout_SendMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/textview_location"
+        android:layout_centerHorizontal="true"
+        >
+        <Button
+            android:id="@+id/Button_SendMessage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="150dp"
+            android:text="ส่งข้อความ"
+            >
+
+        </Button>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/ButtonLayout_LogOut"
+        android:layout_below="@+id/ButtonLayout_SendMessage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+
+        android:layout_centerHorizontal="true"
+        >
+        <Button
+            android:id="@+id/Button_LogOut"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:text="ออกจากระบบ"
+
+            >
+        </Button>
+    </LinearLayout>
+</RelativeLayout>

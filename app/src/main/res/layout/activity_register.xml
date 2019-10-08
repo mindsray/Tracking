@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".Register">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center"
+        android:text="Register"
+        android:textColor="#524F4F"
+        android:textSize="25dp"
+        android:textStyle="bold" />
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/pic_user"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_horizontal"
+
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/ic_person_add_black_24dp" />
+
+    <LinearLayout
+        android:id="@+id/LayoutName"
+        android:layout_below="@+id/pic_user"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:background="@drawable/bgfortextview"
+        >
+
+        <EditText
+            android:id="@+id/EditTextName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:hint="ชื่อ"
+
+            android:inputType="textPersonName" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LayoutLastName"
+        android:layout_below="@id/LayoutName"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/bgfortextview"
+        >
+
+
+       <EditText
+           android:id="@+id/EditText_LastName"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:layout_centerHorizontal="true"
+           android:hint="นามสกุล"
+           android:layout_gravity="center">
+
+       </EditText>
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:id="@+id/LayoutEmail"
+        android:layout_below="@id/LayoutLastName"
+        android:layout_centerHorizontal="true"
+        android:background="@drawable/bgfortextview"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="25dp"
+        >
+
+        <EditText
+            android:id="@+id/EditText_Email"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:hint="อีเมล"
+            android:inputType="textEmailAddress"
+
+            >
+
+
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LayoutPassword"
+        android:layout_below="@id/LayoutEmail"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/bgfortextview"
+        >
+
+
+        <EditText
+            android:id="@+id/EditText_PassWord"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:hint="รหัสผ่าน"
+            android:layout_gravity="center">
+
+        </EditText>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/LayoutPasswordConfirm"
+        android:layout_below="@id/LayoutPassword"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_centerHorizontal="true"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        android:layout_marginTop="25dp"
+        android:background="@drawable/bgfortextview"
+        >
+
+
+        <EditText
+            android:id="@+id/EditText_CFPassWord"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:hint="ยืนยันรหัสผ่าน"
+            android:layout_gravity="center">
+
+        </EditText>
+    </LinearLayout>
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/LayoutReg"
+            android:layout_below="@id/LayoutPasswordConfirm"
+            android:orientation="vertical"
+            android:layout_centerHorizontal="true"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_marginTop="40dp"
+            >
+
+            <Button
+                android:id="@+id/Button_Register"
+                android:layout_width="100dp"
+                android:layout_height="50dp"
+                android:layout_centerHorizontal="true"
+                android:layout_gravity="center"
+                android:text="ลงทะเบียน"
+
+                >
+
+
+            </Button>
+        </LinearLayout>
+</RelativeLayout>
