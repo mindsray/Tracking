@@ -41,20 +41,20 @@ public class Location extends AppCompatActivity {
     private double Longitude_current;
     private TextView textView;
     private static final int REQUEST_LOCATION = 1;
-    private DatabaseReference mDatabase;
     private LocationManager locationManager;
     public static final String TAG = "YOUR-TAG-NAME";
     private DatabaseReference reference;
-    private LocationListener locationListener;
-    private LocationRequest mLocationRequest;
     private FirebaseAuth firebaseAuth;
-    private FirebaseDatabase firebaseDatabase;
     Button SendMessage;
     Button Logout;
     TextView textViewSuccess , EmailUser , Userid;
     private FirebaseUser firebaseUser;
     User user;
     Map<String, Object> hashMap;
+    String image = "";
+
+    private int SELECT_IMAGE = 1001;
+    private int CROP_IMAGE = 2001;
 
 
 
