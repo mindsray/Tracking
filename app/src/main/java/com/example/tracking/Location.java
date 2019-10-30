@@ -31,9 +31,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+import java.util.function.DoublePredicate;
 public class Location extends AppCompatActivity {
 
     private double Latitude_current;
@@ -43,19 +44,18 @@ public class Location extends AppCompatActivity {
     private DatabaseReference mDatabase;
     private LocationManager locationManager;
     public static final String TAG = "YOUR-TAG-NAME";
-    private DatabaseReference reference, getReference;
-    final Handler handler = new Handler();
+    private DatabaseReference reference;
     private LocationListener locationListener;
     private LocationRequest mLocationRequest;
     private FirebaseAuth firebaseAuth;
-    int count = 0;
+    private FirebaseDatabase firebaseDatabase;
     Button SendMessage;
     Button Logout;
-    TextView textViewSuccess;
+    TextView textViewSuccess , EmailUser , Userid;
+    private FirebaseUser firebaseUser;
     User user;
     Map<String, Object> hashMap;
-    String emailUser;
-    private FirebaseAuth  mAuth;
+
 
 
     // The minimum time between updates in milliseconds
@@ -69,7 +69,14 @@ public class Location extends AppCompatActivity {
         SendMessage = findViewById(R.id.Button_SendMessage);
         Logout = findViewById(R.id.Button_LogOut);
         textViewSuccess = findViewById(R.id.textview_Success);
+         EmailUser = findViewById(R.id.textview_name);
+         firebaseAuth = firebaseAuth.getInstance();
+         firebaseUser = firebaseAuth.getCurrentUser();
+         Userid = findViewById(R.id.textview_Uid);
 
+         EmailUser.setText(firebaseUser.getEmail());
+
+//          Userid.setText( firebaseUser.getUid());
 
         SendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -81,6 +88,7 @@ public class Location extends AppCompatActivity {
         Logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                FirebaseAuth.getInstance().signOut();
                 startActivity(new Intent(Location.this, Login.class));
             }
         });
@@ -88,6 +96,8 @@ public class Location extends AppCompatActivity {
         locationManager = (LocationManager) Location.this.getSystemService(Context.LOCATION_SERVICE);
         System.out.println("+ ON CREATE +");
     }
+
+
 
     private void getLocation() {
 
@@ -165,88 +175,40 @@ public class Location extends AppCompatActivity {
     }
 
     private void setLocationCurrent() {
-//        Bundle bundle = getIntent().getExtras();
-//        emailUser = bundle.getString("EmailUser");
-        reference = FirebaseDatabase.getInstance().getReference("User");
-      
+      reference = FirebaseDatabase.getInstance().getReference("Location").child(firebaseUser.getUid()); //ใช้Uid ที่firebase genขึ้นมา
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                String getemail =  firebaseUser.getEmail();
+                hashMap = new HashMap<>();
+                hashMap.put("latitude", Latitude_current);
+                hashMap.put("longitude", Longitude_current);
+                hashMap.put("Email",getemail);
 
-        hashMap = new HashMap<>();
+//                reference.child("Location").setValue(hashMap);
+                reference.updateChildren(hashMap);
+                if (Latitude_current != 0 && Longitude_current != 0) {
+                    textViewSuccess.setText("ส่งตำแหน่งเสร็จสิ้น");
+                } else {
+                    textViewSuccess.setText("ส่งตำแหน่งไม่สำเร็จ");
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+
+
+
+
+             //   reference.child("Location").push().setValue(hashMap);
+
 //           hashMap.put("ID", count);
-        hashMap.put("latitude", Latitude_current);
-        hashMap.put("longitude", Longitude_current);
-
-        reference.updateChildren(hashMap);
-        if (Latitude_current != 0 && Longitude_current != 0) {
-            textViewSuccess.setText("ส่งตำแหน่งเสร็จสิ้น");
-        } else {
-            textViewSuccess.setText("ส่งตำแหน่งไม่สำเร็จ");
-        }
-    }
-
-//        reference.addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                User user = dataSnapshot.getValue(User.class);
-//                if (user.getEmail().equals(emailUser)){
-//                    System.out.println(emailUser);
-//
-//                }
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
 
 
-//    void getlalong(){
-//        user.setLatitude_current(Latitude_current);
-//        user.setLongitude_current(Longitude_current);
-//    }
-
-//    void addLocation(){
-//
-//        FirebaseUser firebaseUser = mAuth.getCurrentUser();
-//        assert  firebaseUser != null;
-//        final String userid = firebaseUser.getUid();
-//        Bundle bundle = getIntent().getExtras();
-//        emailUser = bundle.getString("EmailUser");
-//        reference = FirebaseDatabase.getInstance().getReference("User");
-//        user = new User();
-//
-//        reference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                getlalong();
-//                reference.child(userid).setValue(user);
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//    }
-
-
-//            textView.setText(Latitude_current + " " + Longitude_current);
+            }
 
 
     @Override

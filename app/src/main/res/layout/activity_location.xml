@@ -7,6 +7,25 @@
     android:orientation="vertical"
     tools:context=".Location">
 
+<TextView
+    android:id="@+id/textview_Uid"
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    android:layout_centerHorizontal="true"
+    android:layout_below="@id/textview_name"
+    android:text="Uid"
+
+    />
+
+    <TextView
+        android:id="@+id/textview_name"
+        android:layout_width="wrap_content"
+        android:layout_height="64dp"
+        android:layout_centerHorizontal="true"
+        android:text="texview"
+
+        />
+
     <TextView
         android:id="@+id/textview_location"
         android:layout_width="wrap_content"

@@ -59,7 +59,6 @@ public class Login extends AppCompatActivity {
                                 public void onComplete(@NonNull Task<AuthResult> task) {
                                     if (task.isSuccessful()) {
                                         Intent intent = new Intent(Login.this, Location.class);
-//                                        intent.putExtra("EmailUser",email);
                                         startActivity(intent);
                                     } else {
                                         Toast.makeText(Login.this, "อีเมล์หรือรหัสผ่านไม่ถูกต้อง", Toast.LENGTH_LONG).show();

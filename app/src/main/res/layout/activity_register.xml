@@ -8,6 +8,7 @@
     tools:context=".Register">
 
     <TextView
+        android:id="@+id/text_Register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
@@ -17,20 +18,9 @@
         android:textSize="25dp"
         android:textStyle="bold" />
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/pic_user"
-        android:layout_width="120dp"
-        android:layout_height="120dp"
-        android:layout_centerHorizontal="true"
-        android:layout_gravity="center_horizontal"
-
-        android:gravity="center"
-        android:layout_marginTop="40dp"
-        android:src="@drawable/ic_person_add_black_24dp" />
-
     <LinearLayout
         android:id="@+id/LayoutName"
-        android:layout_below="@+id/pic_user"
+        android:layout_below="@+id/imageView"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -176,4 +166,12 @@
 
             </Button>
         </LinearLayout>
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_below="@+id/text_Register"
+        android:layout_marginTop="-1dp"
+        app:srcCompat="@drawable/ic_account_circle_black_24dp" />
 </RelativeLayout>
