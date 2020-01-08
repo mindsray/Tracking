@@ -4,20 +4,29 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
+import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.storage.StorageManager;
 import android.provider.MediaStore;
 import android.text.TextUtils;
+import android.util.Base64;
 import android.util.Patterns;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,9 +36,15 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -39,20 +54,28 @@ public class Register extends AppCompatActivity {
     private EditText emailUser, passwordUser, NameUser, LastNameUser, CFPasswordUser;
     private Button reg;
     private ImageView imageView;
-    String Name,lastname ,email,pass,cfpass ="";
+    String Name,lastname ,email,pass,cfpass ="" , downloadUrl ,dd;
     User user = new User();
     private FirebaseDatabase db;
-    private DatabaseReference mDatabaseReff;
+    private DatabaseReference mDatabaseReff , getmDatabaseReff;
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
     private String image_user = "";
     CircleImageView CircleImageViewProfile;
+    private int SELECT_IMAGE = 1001;
+    private int CROP_IMAGE = 2001;
+    StorageManager storageManager;
+    private StorageReference mStorageRef;
+    public  Uri imguri;
+    private  StorageReference  storageRef;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        mStorageRef = FirebaseStorage.getInstance().getReference("Images");
 
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
@@ -69,7 +92,6 @@ public class Register extends AppCompatActivity {
                 @Override
                 public void onClick(View view) {
                     chooseImage();
-
                 }
             });
 
@@ -83,7 +105,9 @@ public class Register extends AppCompatActivity {
                 pass= passwordUser.getText().toString();
                 cfpass = CFPasswordUser.getText().toString();
 
-                if( Name.isEmpty() || lastname.isEmpty() || email.isEmpty() || pass.isEmpty() || cfpass.isEmpty()  ){
+                if( Name.isEmpty() || lastname.isEmpty() || email.isEmpty() || pass.isEmpty()
+                        || cfpass.isEmpty()
+                ){
                     AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
                     dialog.setTitle("ลงทะเบียนไม่สำเร็จ");
                     dialog.setMessage("กรุณากรอกข้อมูลให้ครบ");
@@ -92,7 +116,11 @@ public class Register extends AppCompatActivity {
                 }
                 else{
                     if(checkPassword() && checkEmail()){
+                        uploadImage();
                         registerUserToFirebase();
+                        AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
+                        dialog.setTitle("ลงทะเบียนสำเร็จ");
+
                     }
                     else {
                         checkEmail();
@@ -100,17 +128,94 @@ public class Register extends AppCompatActivity {
                     }
 
                 }
+              //  startActivity(new Intent(Register.this, Login.class));
             }
         });
     }
+
+//
+//private  String getExtention(Uri uri){
+//    ContentResolver cr = getContentResolver();
+//    MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+//    return  mimeTypeMap.getExtensionFromMimeType(cr.getType(uri));
+//
+//
+//}
+//private  void FileUploder(){
+//
+//    StorageReference Ref =  mStorageRef.child(System.currentTimeMillis()+"."+getExtention(imguri));
+//
+//    Ref.putFile(imguri)
+//            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>(){
+//                @Override
+//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//                    // Get a URL to the uploaded content
+//                    Uri downloadUrl = taskSnapshot.getUploadSessionUri();
+//                }
+//            })
+//            .addOnFailureListener(new OnFailureListener(){
+//                @Override
+//                public void onFailure(@NonNull Exception exception) {
+//                    // Handle unsuccessful uploads
+//                    // ...
+//                }
+//            });
+//}
+
+
     private void chooseImage() {
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
+
+    private void uploadImage() {
+
+        if(filePath != null)
+        {
+            final ProgressDialog progressDialog = new ProgressDialog(this);
+            progressDialog.setTitle("Uploading...");
+            progressDialog.show();
+
+            StorageReference ref = mStorageRef.child("images/"+ UUID.randomUUID().toString());
+            ref.putFile(filePath)
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+
+                            progressDialog.dismiss();
+
+//                          downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
+//                          System.out.println(downloadUrl);
+
+
+                            Toast.makeText(Register.this, "ลงทะเบียนเสร็จสิ้น", Toast.LENGTH_SHORT).show();
+
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            progressDialog.dismiss();
+                            Toast.makeText(Register.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                    .getTotalByteCount());
+                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                        }
+                    });
+        }
+    }
+
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
                 && data != null && data.getData() != null )
@@ -124,6 +229,9 @@ public class Register extends AppCompatActivity {
             {
                 e.printStackTrace();
             }
+        }
+        else if (resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(Register.this, "Canceled", Toast.LENGTH_SHORT).show();
         }
     }
     private void getValue(){
@@ -149,13 +257,13 @@ public class Register extends AppCompatActivity {
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             assert  firebaseUser != null;
                             final String userid = firebaseUser.getUid();
-
                             mDatabaseReff = FirebaseDatabase.getInstance().getReference("User").child(userid);
                             HashMap<String,String> hashMap = new HashMap<>();
                             hashMap.put("id",userid);
                             hashMap.put("Name",Name);
                             hashMap.put("Last",lastname);
                             hashMap.put("email",email);
+                            hashMap.put("Image",downloadUrl);
 //                            user = new User();
                            mDatabaseReff.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                @Override
@@ -176,6 +284,22 @@ public class Register extends AppCompatActivity {
                         }
                     }
                 });
+
+
+//
+//        storageRef.child("Images/images").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+//            @Override
+//            public void onSuccess(Uri uri) {
+//                // Got the download URL for 'users/me/profile.png'
+//                Uri downloadUri = taskSnapshot.getMetadata().getDownloadUrl();
+//                generatedFilePath = downloadUri.toString(); /// The string(file link) that you need
+//            }
+//        }).addOnFailureListener(new OnFailureListener() {
+//            @Override
+//            public void onFailure(@NonNull Exception exception) {
+//                // Handle any errors
+//            }
+//        });
 
     }
 

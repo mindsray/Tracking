@@ -34,7 +34,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 import java.util.function.DoublePredicate;
+import java.util.jar.Attributes;
+
+import okhttp3.internal.cache.DiskLruCache;
+
 public class Location extends AppCompatActivity {
 
     private double Latitude_current;
@@ -43,16 +48,15 @@ public class Location extends AppCompatActivity {
     private static final int REQUEST_LOCATION = 1;
     private LocationManager locationManager;
     public static final String TAG = "YOUR-TAG-NAME";
-    private DatabaseReference reference;
+    private DatabaseReference reference , databaseReference;
     private FirebaseAuth firebaseAuth;
     Button SendMessage;
     Button Logout;
-    TextView textViewSuccess , EmailUser , Userid;
+    TextView textViewSuccess , EmailUser , Userid ,NameUser ;
     private FirebaseUser firebaseUser;
     User user;
     Map<String, Object> hashMap;
-    String image = "";
-
+    String name;
     private int SELECT_IMAGE = 1001;
     private int CROP_IMAGE = 2001;
 
@@ -72,9 +76,12 @@ public class Location extends AppCompatActivity {
          EmailUser = findViewById(R.id.textview_name);
          firebaseAuth = firebaseAuth.getInstance();
          firebaseUser = firebaseAuth.getCurrentUser();
+
          Userid = findViewById(R.id.textview_Uid);
+         NameUser = findViewById(R.id.textview_name);
 
          EmailUser.setText(firebaseUser.getEmail());
+         textViewSuccess.setText("กำลังส่งตำแหน่ง...");
 
 //          Userid.setText( firebaseUser.getUid());
 
@@ -93,6 +100,64 @@ public class Location extends AppCompatActivity {
             }
         });
 
+
+
+//
+//        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference();
+//        mdatabase.child("User").child(firebaseUser.getUid()).child("Name").addChildEventListener(new ChildEventListener() {
+//            @Override
+//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//
+//            }
+//
+//            @Override
+//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+//
+//            }
+//
+//            @Override
+//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+//                Register value = dataSnapshot.getValue(Register.class);
+//                name = value.Name;
+//
+//
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+
+
+//        DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
+//        DatabaseReference mUsersRef = mRootRef.child("Users").child(firebaseUser.getUid()).child("Name");
+//        databaseReference= FirebaseDatabase.getInstance().getReference().child("User").child(firebaseUser.getUid()).child("Name");
+//
+//        databaseReference.addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+//                    Register value = snapshot.getValue(Register.class);
+//                     name = value.Name;
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError databaseError) {
+//
+//            }
+//        });
+//        System.out.println(name);
+
+
         locationManager = (LocationManager) Location.this.getSystemService(Context.LOCATION_SERVICE);
         System.out.println("+ ON CREATE +");
     }
@@ -100,19 +165,24 @@ public class Location extends AppCompatActivity {
 
 
     private void getLocation() {
-
         if (ActivityCompat.checkSelfPermission
-                (Location.this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                (Location.this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED)
+        {
+            ActivityCompat.requestPermissions(Location.this, new String[]
+                    {Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
+        } else
+            {
+            android.location.Location location =
+                    locationManager.getLastKnownLocation
+                            (LocationManager.NETWORK_PROVIDER);
+            android.location.Location location1 =
+                    locationManager.getLastKnownLocation
+                            (LocationManager.GPS_PROVIDER);
 
-            ActivityCompat.requestPermissions(Location.this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQUEST_LOCATION);
-
-        } else {
-            android.location.Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-
-            android.location.Location location1 = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-
-            android.location.Location location2 = locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-
+            android.location.Location location2 =
+                    locationManager.getLastKnownLocation
+                            (LocationManager.PASSIVE_PROVIDER);
 
             if (location != null) {
                 double latti = location.getLatitude();
@@ -122,7 +192,6 @@ public class Location extends AppCompatActivity {
 
                 System.out.println("lo " + Latitude_current + " " + Longitude_current);
 
-
             } else if (location1 != null) {
                 double latti = location1.getLatitude();
                 double longi = location1.getLongitude();
@@ -130,8 +199,8 @@ public class Location extends AppCompatActivity {
                 Longitude_current = longi;
 
                 System.out.println("lo1 " + Latitude_current + " " + Longitude_current);
-
-            } else if (location2 != null) {
+}
+            else if (location2 != null) {
                 double latti = location2.getLatitude();
                 double longi = location2.getLongitude();
                 Latitude_current = latti;
@@ -139,9 +208,8 @@ public class Location extends AppCompatActivity {
 
                 System.out.println("lo2 " + Latitude_current + " " + Longitude_current);
 
-
-            } else {
-
+            }
+                   else {
                 Toast.makeText(Location.this, "Unble to Trace your location", Toast.LENGTH_SHORT).show();
 
             }
@@ -172,47 +240,82 @@ public class Location extends AppCompatActivity {
                 });
         final AlertDialog alert = builder.create();
         alert.show();
+
     }
 
-    private void setLocationCurrent() {
-      reference = FirebaseDatabase.getInstance().getReference("Location").child(firebaseUser.getUid()); //ใช้Uid ที่firebase genขึ้นมา
+
+
+        private void setLocationCurrent() {
+
+
+            String uid = firebaseUser.getUid();
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference uidRef = rootRef.child("User").child(uid);
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                     name = dataSnapshot.child("Name").getValue(String.class);
+
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            };
+            uidRef.addListenerForSingleValueEvent(valueEventListener);
+
+
+
+        reference = FirebaseDatabase.getInstance().getReference("Location").child(firebaseUser.getUid());
+
+//            reference.child("User").child("name").addValueEventListener();
+
         reference.addValueEventListener(new ValueEventListener() {
             @Override
-            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                String getemail =  firebaseUser.getEmail();
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot)
+            {
                 hashMap = new HashMap<>();
-                hashMap.put("latitude", Latitude_current);
-                hashMap.put("longitude", Longitude_current);
-                hashMap.put("Email",getemail);
+                String getemail =  firebaseUser.getEmail();
 
-//                reference.child("Location").setValue(hashMap);
+
+//                Register value = dataSnapshot.getValue(Register.class);
+//                name = value.Name;
+                hashMap.put("Email",getemail);
+                hashMap.put("Name",name);
+
+                if (Latitude_current >= 13.814107
+                        && Longitude_current <= 100.041824 ){
+                    hashMap.put("latitude", Latitude_current);
+                    hashMap.put("longitude", Longitude_current);
+                    hashMap.put("Status", "Online");
+                }
+                else
+                    {
+                        hashMap.put("Status", "Offline");
+                }
+
+
+
                 reference.updateChildren(hashMap);
-                if (Latitude_current != 0 && Longitude_current != 0) {
+
+                if (Latitude_current >= 13.814107 && Longitude_current <= 100.041824 ) {
                     textViewSuccess.setText("ส่งตำแหน่งเสร็จสิ้น");
-                } else {
-                    textViewSuccess.setText("ส่งตำแหน่งไม่สำเร็จ");
+                }
+                else
+                {
+                    textViewSuccess.setText("ไม่สามารถส่งตำแหน่งได้เนื่องจากคุณไม่อยู่ในขอบเขต");
                 }
             }
-
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
 
             }
         });
-
-
-
-
-             //   reference.child("Location").push().setValue(hashMap);
-
-//           hashMap.put("ID", count);
-
-
             }
 
 
     @Override
     public void onStart() {
+
         super.onStart();
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
@@ -221,16 +324,10 @@ public class Location extends AppCompatActivity {
                 getLocation();
             if (Latitude_current != 0 && Longitude_current != 0) {
                 setLocationCurrent();
-            } else {
-                textViewSuccess.setText("ส่งตำแหน่งไม่สำเร็จ");
             }
-
-            //  textView.setText(  Latitude_current +" "+ Longitude_current  );
-
-        } else {
-            textViewSuccess.setText("ไม่สามารถตำแหน่งปัจจุบันไม่ได้");
         }
         System.out.println("++ ON START ++ ");
+        textViewSuccess.setText("กำลังส่งตำแหน่ง...");
     }
 
     @Override
@@ -250,6 +347,7 @@ public class Location extends AppCompatActivity {
                                 setLocationCurrent();
 
                                 textView.setText(Latitude_current + " " + Longitude_current);
+
                             }
                         });
                     } catch (InterruptedException e) {
@@ -260,6 +358,7 @@ public class Location extends AppCompatActivity {
 
                 }
 
+                textViewSuccess.setText("กำลังส่งตำแหน่ง...");
             }
         };
         t.start();
