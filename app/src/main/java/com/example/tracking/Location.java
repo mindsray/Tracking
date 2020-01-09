@@ -282,23 +282,24 @@ public class Location extends AppCompatActivity {
                 hashMap.put("Email",getemail);
                 hashMap.put("Name",name);
 
-                if (Latitude_current >= 13.814107
-                        && Longitude_current <= 100.041824 ){
+                if (Latitude_current >= 13.817000 || Latitude_current <= 13.818888){
+                    if (Longitude_current >= 100.036000 || Longitude_current < 100.045000)   {
                     hashMap.put("latitude", Latitude_current);
                     hashMap.put("longitude", Longitude_current);
                     hashMap.put("Status", "Online");
+                }
                 }
                 else
                     {
                         hashMap.put("Status", "Offline");
                 }
 
-
-
                 reference.updateChildren(hashMap);
 
-                if (Latitude_current >= 13.814107 && Longitude_current <= 100.041824 ) {
-                    textViewSuccess.setText("ส่งตำแหน่งเสร็จสิ้น");
+                if (Latitude_current >= 13.817000 && Latitude_current <= 13.818888) {
+                    if (Longitude_current >= 100.036000 && Longitude_current < 100.045000) {
+                        textViewSuccess.setText("ส่งตำแหน่งเสร็จสิ้น");
+                    }
                 }
                 else
                 {
@@ -307,7 +308,7 @@ public class Location extends AppCompatActivity {
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-
+                System.out.println("Can't put data ");
             }
         });
             }

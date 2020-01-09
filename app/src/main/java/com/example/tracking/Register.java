@@ -24,6 +24,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.google.android.gms.auth.api.signin.internal.Storage;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,6 +44,7 @@ import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -54,7 +56,15 @@ public class Register extends AppCompatActivity {
     private EditText emailUser, passwordUser, NameUser, LastNameUser, CFPasswordUser;
     private Button reg;
     private ImageView imageView;
-    String Name,lastname ,email,pass,cfpass ="" , downloadUrl ,dd;
+    String Name , link;
+    public Uri imageUrl;
+    UUID id;
+    String lastname;
+    String email;
+    String pass;
+    String cfpass ="";
+    Task<Uri> downloadUrl;
+    String dd;
     User user = new User();
     private FirebaseDatabase db;
     private DatabaseReference mDatabaseReff , getmDatabaseReff;
@@ -64,10 +74,10 @@ public class Register extends AppCompatActivity {
     CircleImageView CircleImageViewProfile;
     private int SELECT_IMAGE = 1001;
     private int CROP_IMAGE = 2001;
-    StorageManager storageManager;
     private StorageReference mStorageRef;
-    public  Uri imguri;
-    private  StorageReference  storageRef;
+    private StorageManager storageManager;
+    private Storage storage;
+    private static final int ImageBack=1;
 
 
 
@@ -76,7 +86,7 @@ public class Register extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         mStorageRef = FirebaseStorage.getInstance().getReference("Images");
-
+        id = UUID.randomUUID();
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
@@ -131,36 +141,9 @@ public class Register extends AppCompatActivity {
               //  startActivity(new Intent(Register.this, Login.class));
             }
         });
-    }
 
-//
-//private  String getExtention(Uri uri){
-//    ContentResolver cr = getContentResolver();
-//    MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
-//    return  mimeTypeMap.getExtensionFromMimeType(cr.getType(uri));
-//
-//
-//}
-//private  void FileUploder(){
-//
-//    StorageReference Ref =  mStorageRef.child(System.currentTimeMillis()+"."+getExtention(imguri));
-//
-//    Ref.putFile(imguri)
-//            .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>(){
-//                @Override
-//                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-//                    // Get a URL to the uploaded content
-//                    Uri downloadUrl = taskSnapshot.getUploadSessionUri();
-//                }
-//            })
-//            .addOnFailureListener(new OnFailureListener(){
-//                @Override
-//                public void onFailure(@NonNull Exception exception) {
-//                    // Handle unsuccessful uploads
-//                    // ...
-//                }
-//            });
-//}
+
+    }
 
 
     private void chooseImage() {
@@ -169,6 +152,36 @@ public class Register extends AppCompatActivity {
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
     }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
+                && data != null && data.getData() != null )
+        {
+            filePath = data.getData();
+            imageView.setImageURI(filePath);
+            try {
+                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
+                imageView.setImageBitmap(bitmap);
+            }
+            catch (IOException e)
+            {
+                e.printStackTrace();
+            }
+        }
+        else if (resultCode == Activity.RESULT_CANCELED) {
+            Toast.makeText(Register.this, "Canceled", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+private String getExtention(Uri uri){
+
+         ContentResolver cr = getContentResolver();
+         MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+         return mimeTypeMap.getMimeTypeFromExtension(cr.getType(uri));
+
+}
 
     private void uploadImage() {
 
@@ -178,7 +191,7 @@ public class Register extends AppCompatActivity {
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = mStorageRef.child("images/"+ UUID.randomUUID().toString());
+            StorageReference ref = mStorageRef.child("images/"+ id.toString());
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
@@ -186,12 +199,8 @@ public class Register extends AppCompatActivity {
 
                             progressDialog.dismiss();
 
-//                          downloadUrl = taskSnapshot.getMetadata().getReference().getDownloadUrl().toString();
-//                          System.out.println(downloadUrl);
-
-
                             Toast.makeText(Register.this, "ลงทะเบียนเสร็จสิ้น", Toast.LENGTH_SHORT).show();
-
+//                            System.out.println( downloadUrl);
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -209,37 +218,13 @@ public class Register extends AppCompatActivity {
                             progressDialog.setMessage("Uploaded "+(int)progress+"%");
                         }
                     });
+
+
         }
     }
 
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
-        super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PICK_IMAGE_REQUEST && resultCode == RESULT_OK
-                && data != null && data.getData() != null )
-        {
-            filePath = data.getData();
-            try {
-                Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                imageView.setImageBitmap(bitmap);
-            }
-            catch (IOException e)
-            {
-                e.printStackTrace();
-            }
-        }
-        else if (resultCode == Activity.RESULT_CANCELED) {
-            Toast.makeText(Register.this, "Canceled", Toast.LENGTH_SHORT).show();
-        }
-    }
-    private void getValue(){
-        user.setName(NameUser.getText().toString().trim());
-        user.setLastname(LastNameUser.getText().toString().trim());
-        user.setEmail(emailUser.getText().toString().trim());
-        user.setPass(passwordUser.getText().toString().trim());
-    }
 
     private void registerUserToFirebase(){
 
@@ -263,7 +248,6 @@ public class Register extends AppCompatActivity {
                             hashMap.put("Name",Name);
                             hashMap.put("Last",lastname);
                             hashMap.put("email",email);
-                            hashMap.put("Image",downloadUrl);
 //                            user = new User();
                            mDatabaseReff.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
                                @Override
