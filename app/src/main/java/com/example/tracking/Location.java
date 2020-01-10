@@ -73,10 +73,9 @@ public class Location extends AppCompatActivity {
         SendMessage = findViewById(R.id.Button_SendMessage);
         Logout = findViewById(R.id.Button_LogOut);
         textViewSuccess = findViewById(R.id.textview_Success);
-         EmailUser = findViewById(R.id.textview_name);
-         firebaseAuth = firebaseAuth.getInstance();
-         firebaseUser = firebaseAuth.getCurrentUser();
-
+        EmailUser = findViewById(R.id.textview_name);
+        firebaseAuth = firebaseAuth.getInstance();
+        firebaseUser = firebaseAuth.getCurrentUser();
          Userid = findViewById(R.id.textview_Uid);
          NameUser = findViewById(R.id.textview_name);
 
@@ -282,7 +281,7 @@ public class Location extends AppCompatActivity {
                 hashMap.put("Email",getemail);
                 hashMap.put("Name",name);
 
-                if (Latitude_current >= 13.817000 && Latitude_current <= 13.818888){
+                if (Latitude_current >= 13.817000 && Latitude_current <= 13.830000){
                     if (Longitude_current >= 100.036000 && Longitude_current < 100.045000)   {
                     hashMap.put("latitude", Latitude_current);
                     hashMap.put("longitude", Longitude_current);
@@ -296,7 +295,7 @@ public class Location extends AppCompatActivity {
 
                 reference.updateChildren(hashMap);
 
-                if (Latitude_current >= 13.817000 && Latitude_current <= 13.818888) {
+                if (Latitude_current >= 13.817000 && Latitude_current <= 13.830000) {
                     if (Longitude_current >= 100.036000 && Longitude_current < 100.045000) {
                         textViewSuccess.setText("ส่งตำแหน่งเสร็จสิ้น");
                     }
