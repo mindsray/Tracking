@@ -56,7 +56,7 @@ public class Location extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     User user;
     Map<String, Object> hashMap;
-    String name;
+    String name , link;
     private int SELECT_IMAGE = 1001;
     private int CROP_IMAGE = 2001;
 
@@ -99,62 +99,6 @@ public class Location extends AppCompatActivity {
             }
         });
 
-
-
-//
-//        DatabaseReference mdatabase = FirebaseDatabase.getInstance().getReference();
-//        mdatabase.child("User").child(firebaseUser.getUid()).child("Name").addChildEventListener(new ChildEventListener() {
-//            @Override
-//            public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//
-//            }
-//
-//            @Override
-//            public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-//
-//            }
-//
-//            @Override
-//            public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-//                Register value = dataSnapshot.getValue(Register.class);
-//                name = value.Name;
-//
-//
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
-
-//        DatabaseReference mRootRef = FirebaseDatabase.getInstance().getReference();
-//        DatabaseReference mUsersRef = mRootRef.child("Users").child(firebaseUser.getUid()).child("Name");
-//        databaseReference= FirebaseDatabase.getInstance().getReference().child("User").child(firebaseUser.getUid()).child("Name");
-//
-//        databaseReference.addValueEventListener(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    Register value = snapshot.getValue(Register.class);
-//                     name = value.Name;
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-//        System.out.println(name);
 
 
         locationManager = (LocationManager) Location.this.getSystemService(Context.LOCATION_SERVICE);
@@ -241,11 +185,8 @@ public class Location extends AppCompatActivity {
         alert.show();
 
     }
-
-
-
+    
         private void setLocationCurrent() {
-
 
             String uid = firebaseUser.getUid();
             DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
@@ -254,6 +195,7 @@ public class Location extends AppCompatActivity {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                      name = dataSnapshot.child("Name").getValue(String.class);
+                     link = dataSnapshot.child("imageUrl").getValue(String.class);
 
                 }
 
@@ -280,6 +222,7 @@ public class Location extends AppCompatActivity {
 //                name = value.Name;
                 hashMap.put("Email",getemail);
                 hashMap.put("Name",name);
+                hashMap.put("imageUrl",link);
 
                 if (Latitude_current >= 13.817000 && Latitude_current <= 13.830000){
                     if (Longitude_current >= 100.036000 && Longitude_current < 100.045000)   {

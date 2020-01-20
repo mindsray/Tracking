@@ -10,6 +10,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.storage.StorageManager;
@@ -43,6 +44,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.HashMap;
@@ -79,10 +81,15 @@ public class Register extends AppCompatActivity {
     private Storage storage;
     private static final int ImageBack=1;
 
+    private FirebaseUser firebaseUser;
+    public String U_id;
+    HashMap<String,String> hashMap = new HashMap<>();
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         mStorageRef = FirebaseStorage.getInstance().getReference("Images");
@@ -126,8 +133,8 @@ public class Register extends AppCompatActivity {
                 }
                 else{
                     if(checkPassword() && checkEmail()){
-                        uploadImage();
                         registerUserToFirebase();
+                        uploadImage();
                         AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
                         dialog.setTitle("ลงทะเบียนสำเร็จ");
 
@@ -183,21 +190,120 @@ private String getExtention(Uri uri){
 
 }
 
-    private void uploadImage() {
 
+
+
+//private  void  getimage (){
+//    mStorageRef.child("/Images/images").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+//        @Override
+//        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+//            Uri downloadUri = taskSnapshot.getStorage().getDownloadUrl();
+//            generatedFilePath = downloadUri.toString();
+//        }
+//    });
+//}
+
+
+    private void registerUserToFirebase(){
+
+
+        email= emailUser.getText().toString().trim();
+        pass = passwordUser.getText().toString().trim();
+
+        mAuth = FirebaseAuth.getInstance();
+
+        mAuth.createUserWithEmailAndPassword(email,pass)
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            //เรียกดาต้าเบสมาใช้ vvv
+                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
+                            assert  firebaseUser != null;
+                            final String userid = firebaseUser.getUid();
+                            mDatabaseReff = FirebaseDatabase.getInstance().getReference("User").child(userid);
+//                            HashMap<String,String> hashMap = new HashMap<>();
+                            hashMap.put("id",userid);
+                            hashMap.put("Name",Name);
+                            hashMap.put("Last",lastname);
+                            hashMap.put("email",email);
+//                          user = new User();
+                            U_id = userid;
+                            System.out.println(U_id);
+                            mDatabaseReff.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()){
+                                        Intent intent = new Intent(Register.this,Login.class);
+                                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                        startActivity(intent);
+                                        finish();
+
+                                    }
+
+                                }
+                            });
+
+                        } else {
+                            Toast.makeText(Register.this ,"ลงทะเบียนสำเร็จ" ,Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+
+    }
+
+    private boolean checkPassword(){
+        if(pass.length() >= 8 && pass.equals(cfpass)){
+            return true;
+        }
+        else{
+            Toast.makeText(Register.this,"รหัสผ่านไม่ถูกต้อง", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
+    private boolean checkEmail(){
+        if(Patterns.EMAIL_ADDRESS.matcher(email).matches() ){
+            return true;
+        }
+        else {
+            Toast.makeText(Register.this,"รูปแบบอีเมล์ไม่ถูกต้อง",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+    }
+
+
+    private void uploadImage() {
         if(filePath != null)
         {
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            StorageReference ref = mStorageRef.child("images/"+ id.toString());
+            final StorageReference ref = mStorageRef.child("images/"+ id.toString());
             ref.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                             progressDialog.dismiss();
+                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                                @Override
+                                public void onSuccess(Uri uri) {
+                                    DatabaseReference imageStroe = FirebaseDatabase.getInstance().getReference().child("User").child(U_id);
+                                    hashMap.put("imageUrl", String.valueOf(uri));
+                                    System.out.println(uri);
+                                    imageStroe.setValue(hashMap).addOnSuccessListener(new OnSuccessListener<Void>() {
+                                        @Override
+                                        public void onSuccess(Void aVoid) {
+                                            System.out.println("Completeddd");
+                                        }
+
+                                    });
+
+                                }
+                            });
 
                             Toast.makeText(Register.this, "ลงทะเบียนเสร็จสิ้น", Toast.LENGTH_SHORT).show();
 //                            System.out.println( downloadUrl);
@@ -222,95 +328,7 @@ private String getExtention(Uri uri){
 
         }
     }
-
-
-
-
-    private void registerUserToFirebase(){
-
-        email= emailUser.getText().toString().trim();
-        pass = passwordUser.getText().toString().trim();
-
-        mAuth = FirebaseAuth.getInstance();
-
-        mAuth.createUserWithEmailAndPassword(email,pass)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
-                            //เรียกดาต้าเบสมาใช้ vvv
-                            FirebaseUser firebaseUser = mAuth.getCurrentUser();
-                            assert  firebaseUser != null;
-                            final String userid = firebaseUser.getUid();
-                            mDatabaseReff = FirebaseDatabase.getInstance().getReference("User").child(userid);
-                            HashMap<String,String> hashMap = new HashMap<>();
-                            hashMap.put("id",userid);
-                            hashMap.put("Name",Name);
-                            hashMap.put("Last",lastname);
-                            hashMap.put("email",email);
-//                            user = new User();
-                           mDatabaseReff.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-                               @Override
-                               public void onComplete(@NonNull Task<Void> task) {
-                                   if(task.isSuccessful()){
-                                       Intent intent = new Intent(Register.this,Login.class);
-                                       intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                       startActivity(intent);
-                                       finish();
-
-                                   }
-
-                               }
-                           });
-
-                        } else {
-                            Toast.makeText(Register.this ,"ลงทะเบียนสำเร็จ" ,Toast.LENGTH_SHORT).show();
-                        }
-                    }
-                });
-
-
-//
-//        storageRef.child("Images/images").getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-//            @Override
-//            public void onSuccess(Uri uri) {
-//                // Got the download URL for 'users/me/profile.png'
-//                Uri downloadUri = taskSnapshot.getMetadata().getDownloadUrl();
-//                generatedFilePath = downloadUri.toString(); /// The string(file link) that you need
-//            }
-//        }).addOnFailureListener(new OnFailureListener() {
-//            @Override
-//            public void onFailure(@NonNull Exception exception) {
-//                // Handle any errors
-//            }
-//        });
-
-    }
-
-    private boolean checkPassword(){
-        if(pass.length() >= 8 && pass.equals(cfpass)){
-            return true;
-        }
-        else{
-            Toast.makeText(Register.this,"รหัสผ่านไม่ถูกต้อง", Toast.LENGTH_SHORT).show();
-            return false;
-        }
-    }
-
-    private boolean checkEmail(){
-        if(Patterns.EMAIL_ADDRESS.matcher(email).matches() ){
-            return true;
-        }
-        else {
-            Toast.makeText(Register.this,"รูปแบบอีเมล์ไม่ถูกต้อง",Toast.LENGTH_SHORT).show();
-            return false;
-        }
-    }
 }
-
-
-
-
 
 
 
