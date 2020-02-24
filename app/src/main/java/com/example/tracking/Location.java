@@ -16,8 +16,11 @@ import android.location.LocationManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +33,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,10 +42,10 @@ import java.util.UUID;
 import java.util.function.DoublePredicate;
 import java.util.jar.Attributes;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.internal.cache.DiskLruCache;
 
 public class Location extends AppCompatActivity {
-
     private double Latitude_current;
     private double Longitude_current;
     private TextView textView;
@@ -51,12 +55,14 @@ public class Location extends AppCompatActivity {
     private DatabaseReference reference , databaseReference;
     private FirebaseAuth firebaseAuth;
     Button SendMessage;
-    Button Logout;
-    TextView textViewSuccess , EmailUser , Userid ,NameUser ;
+    Button Logout ,test;
+    TextView textViewSuccess , EmailUser , Userid ,Name ;
+    CircleImageView imageview;
     private FirebaseUser firebaseUser;
     User user;
     Map<String, Object> hashMap;
-    String name , link;
+    String name ;
+    String link ;
     private int SELECT_IMAGE = 1001;
     private int CROP_IMAGE = 2001;
 
@@ -67,6 +73,7 @@ public class Location extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
         textView = findViewById(R.id.textview_location);
@@ -76,11 +83,29 @@ public class Location extends AppCompatActivity {
         EmailUser = findViewById(R.id.textview_name);
         firebaseAuth = firebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-         Userid = findViewById(R.id.textview_Uid);
-         NameUser = findViewById(R.id.textview_name);
+        imageview = findViewById(R.id.imageViewProfile);
+        Name = findViewById(R.id.textview_UserName);
 
-         EmailUser.setText(firebaseUser.getEmail());
-         textViewSuccess.setText("กำลังส่งตำแหน่ง...");
+        EmailUser.setText(firebaseUser.getEmail());
+        String uid = firebaseUser.getUid();
+        textViewSuccess.setText("กำลังส่งตำแหน่ง...");
+
+            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+            DatabaseReference uidRef = rootRef.child("User").child(uid);
+            ValueEventListener valueEventListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    name = dataSnapshot.child("Name").getValue(String.class);
+                    Name.setText(name); //getnameไว้หน้าUI
+                    link = dataSnapshot.child("imageUrl").getValue(String.class);
+                    System.out.println(link);
+                    LoadImageUrl(link);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {}
+            };
+            uidRef.addListenerForSingleValueEvent(valueEventListener);
 
 //          Userid.setText( firebaseUser.getUid());
 
@@ -95,17 +120,59 @@ public class Location extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 FirebaseAuth.getInstance().signOut();
+                finish();
                 startActivity(new Intent(Location.this, Login.class));
             }
         });
-
-
 
         locationManager = (LocationManager) Location.this.getSystemService(Context.LOCATION_SERVICE);
         System.out.println("+ ON CREATE +");
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
+        getMenuInflater().inflate(R.menu.option,menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == R.id.action_Profile){
+            Intent profileIntent = new Intent(Location.this , ShowProfile.class);
+            startActivity(profileIntent);
+        }
+        if (id == R.id.action_ChangePassword){
+            Intent ChangePWIntent = new Intent(Location.this , ShowProfile.class);
+            startActivity(ChangePWIntent);
+        }
+        if (id == R.id.action_Logout){
+            Intent LogoutIntent = new Intent(Location.this , Login.class);
+            startActivity(LogoutIntent);
+            finish();
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private  void LoadImageUrl(String link){
+
+    Picasso.get().load(link).placeholder(R.mipmap.ic_launcher)
+    .error(R.mipmap.ic_launcher)
+    .into(imageview , new com.squareup.picasso.Callback(){
+
+        @Override
+        public void onSuccess() {
+
+            System.out.println("sssssssssssssssssssss");
+        }
+        @Override
+        public void onError(Exception e) {
+            System.out.println("rrrrrrrrrrrrrrrrrrrr");
+
+        }
+    });
+}
 
     private void getLocation() {
         if (ActivityCompat.checkSelfPermission
@@ -185,7 +252,7 @@ public class Location extends AppCompatActivity {
         alert.show();
 
     }
-    
+
         private void setLocationCurrent() {
 
             String uid = firebaseUser.getUid();

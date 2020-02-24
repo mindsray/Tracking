@@ -4,90 +4,95 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+
+    android:background="@drawable/main"
     android:orientation="vertical"
     tools:context=".Location">
 
-    <TextView
-        android:id="@+id/textview_Uid"
-        android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:layout_below="@id/textview_name"
-        android:layout_centerHorizontal="true"
-        android:text="Uid"
 
-        />
-    <TextView
-        android:id="@+id/textview_UserName"
-        android:layout_width="wrap_content"
-        android:layout_height="80dp"
-        android:layout_below="@id/textview_Uid"
-        android:layout_centerHorizontal="true"
-        android:text="Name"
-/>
     <TextView
         android:id="@+id/textview_name"
-        android:layout_width="wrap_content"
-        android:layout_height="64dp"
-        android:layout_centerHorizontal="true"
-        android:text="texview"
-        />
+        android:layout_width="148dp"
+        android:layout_height="73dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="305dp"
+
+        android:layout_marginTop="103dp"
+        android:layout_marginEnd="-43dp"
+        android:text="texview" />
 
     <TextView
         android:id="@+id/textview_location"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="TextView"
-        android:layout_marginTop="250dp"
         android:layout_centerHorizontal="true"
-        />
+        android:layout_marginTop="250dp"
+        android:text="TextView" />
+
     <TextView
         android:id="@+id/textview_Success"
-        android:layout_below="@id/textview_location"
-        android:layout_marginTop="30dp"
-        android:layout_centerHorizontal="true"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/textview_location"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
         android:text="กำลังส่งตำแหน่ง"
 
 
         >
 
     </TextView>
-    <LinearLayout
-        android:id="@+id/ButtonLayout_SendMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/textview_location"
+
+
+    <TextView
+        android:id="@+id/textview_UserName"
+        android:layout_width="100dp"
+        android:layout_height="80dp"
+        android:layout_below="@+id/textview_name"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="338dp"
+        android:layout_marginTop="-102dp"
+        android:layout_marginEnd="-28dp"
+        android:text="Name" />
+
+    <Button
+        android:id="@+id/Button_SendMessage"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/textview_Success"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="100dp"
+        android:background="@drawable/button_sendmessage">
 
-        >
-        <Button
-            android:id="@+id/Button_SendMessage"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="150dp"
-            android:text="ส่งข้อความ"
-            >
+    </Button>
 
-        </Button>
-    </LinearLayout>
-    <LinearLayout
-        android:id="@+id/ButtonLayout_LogOut"
-        android:layout_below="@+id/ButtonLayout_SendMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-
+    <Button
+        android:id="@+id/Button_LogOut"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_below="@+id/Button_SendMessage"
         android:layout_centerHorizontal="true"
-        >
-        <Button
-            android:id="@+id/Button_LogOut"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="50dp"
-            android:text="ออกจากระบบ"
+        android:layout_marginTop="50dp"
 
-            >
-        </Button>
-    </LinearLayout>
+
+        android:background="@drawable/button_logout"></Button>
+
+    <de.hdodenhof.circleimageview.CircleImageView
+        android:id="@+id/imageViewProfile"
+        android:layout_width="75dp"
+        android:layout_height="66dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="319dp"
+        android:layout_marginTop="3dp"
+        android:layout_marginEnd="17dp"
+        android:background="@drawable/image_icon_proflie"
+        app:civ_border_color="#00F7F4F4"
+        app:civ_border_width="2dp"></de.hdodenhof.circleimageview.CircleImageView>
 
 </RelativeLayout>

@@ -4,60 +4,60 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+
+    android:background="@drawable/homescreen"
     tools:context=".Login">
 
-  <LinearLayout
-      android:id="@+id/textviewLayout_UserName"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_marginLeft="100dp"
-      android:layout_marginTop="250dp"
-      >
-    <TextView
-        android:id="@+id/textview_UserName"
+    <LinearLayout
+        android:id="@+id/textviewLayout_UserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="ชื่อผู้ใช้"
-        />
-      </LinearLayout>
+        android:layout_marginLeft="100dp"
+        android:layout_marginTop="250dp">
+
+        <TextView
+            android:id="@+id/textview_UserName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ชื่อผู้ใช้" />
+    </LinearLayout>
+
     <LinearLayout
         android:id="@+id/EditTextLayout_UserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/textviewLayout_UserName"
-        android:layout_marginLeft="100dp"
-        >
+        android:layout_marginLeft="100dp">
+
         <EditText
             android:id="@+id/EditText_Email"
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:hint="example@email.com"
-            android:inputType="textEmailAddress"
-            >
-        </EditText>
+            android:inputType="textEmailAddress"></EditText>
     </LinearLayout>
+
     <LinearLayout
         android:id="@+id/TextViewLayout_PassWord"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@+id/EditTextLayout_UserName"
-        android:layout_marginTop="30dp"
         android:layout_marginLeft="100dp"
-        >
+        android:layout_marginTop="30dp">
+
         <TextView
             android:id="@+id/TextView_PassWord"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="รหัสผ่าน"
-            />
+            android:text="รหัสผ่าน" />
     </LinearLayout>
+
     <LinearLayout
+        android:id="@+id/pass_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/TextViewLayout_PassWord"
-        android:layout_marginLeft="100dp"
-        android:id="@+id/pass_layout"
-        >
+        android:layout_marginLeft="100dp">
 
         <EditText
             android:id="@+id/EditText_PassWord"
@@ -66,37 +66,33 @@
             android:inputType="textPassword"></EditText>
     </LinearLayout>
 
-<LinearLayout
-    android:id="@+id/ButtonLayout_Login"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_below="@id/pass_layout"
-    android:layout_marginTop="65dp"
-    android:layout_centerHorizontal="true"
-    >
-    <Button
-        android:id="@+id/Button_Login"
+    <LinearLayout
+        android:id="@+id/ButtonLayout_Login"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="เข้าสู่ระบบ"
-        >
-    </Button>
-</LinearLayout>
+        android:layout_below="@id/pass_layout"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="65dp">
+
+        <Button
+            android:id="@+id/Button_Login"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:background="@drawable/button_login"></Button>
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/TextViewLayout_Register"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/ButtonLayout_Login"
-        android:layout_marginTop="25dp"
         android:layout_centerHorizontal="true"
-        >
+        android:layout_marginTop="25dp">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="หากยังไม่ได้เป็นสมาชิก ? "
-            >
-        </TextView>
+            android:text="หากยังไม่ได้เป็นสมาชิก ? "></TextView>
 
         <TextView
             android:id="@+id/TextView_Register"

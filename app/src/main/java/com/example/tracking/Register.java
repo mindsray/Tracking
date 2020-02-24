@@ -4,6 +4,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
@@ -42,6 +43,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -57,7 +59,7 @@ public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText emailUser, passwordUser, NameUser, LastNameUser, CFPasswordUser;
     private Button reg;
-    private ImageView imageView;
+    private CircleImageView imageView;
     String Name , link;
     public Uri imageUrl;
     UUID id;
@@ -103,8 +105,7 @@ public class Register extends AppCompatActivity {
             passwordUser = findViewById(R.id.EditText_PassWord);
             CFPasswordUser = findViewById(R.id.EditText_CFPassWord);
             reg = findViewById(R.id.Button_Register);
-            imageView =  findViewById(R.id.imageView);
-
+            imageView = findViewById(R.id.imageView);
             imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -154,10 +155,14 @@ public class Register extends AppCompatActivity {
 
 
     private void chooseImage() {
+
         Intent intent = new Intent();
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
+
+
+
     }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -274,9 +279,11 @@ private String getExtention(Uri uri){
     }
 
 
+
     private void uploadImage() {
         if(filePath != null)
         {
+
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
