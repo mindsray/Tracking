@@ -28,7 +28,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-
 public class Message extends AppCompatActivity {
     private EditText Message;
     private Button SentMessage , history;
@@ -54,7 +53,6 @@ public class Message extends AppCompatActivity {
         SentMessage = findViewById(R.id.button_sentMessage);
         history = findViewById(R.id.button_History);
         textViewTime = findViewById(R.id.textViewTime);
-
         firebaseAuth = firebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
 
@@ -146,10 +144,11 @@ public class Message extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 hashmapHistory = new HashMap<String, String>();
-                 String h = (String) hashMap.put("time",time);
-                 count = (int) dataSnapshot.getChildrenCount();
+                hashmapHistory.put("text",text);
+                count = (int) dataSnapshot.getChildrenCount();
                 System.out.println(count);
-                reference2.child(String.valueOf(count)).setValue(h);
+                reference2.child(String.valueOf(count)).setValue(text);
+                System.out.println(text);
 
             }
 

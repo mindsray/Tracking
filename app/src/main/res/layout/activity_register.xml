@@ -4,17 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/register"
+    android:background="@drawable/main"
     android:orientation="vertical"
     tools:context=".Register">
+
 
     <LinearLayout
         android:id="@+id/LayoutName"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageView"
+        android:layout_below="@+id/imageview"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="0dp"
+        android:layout_marginTop="30dp"
         android:background="@drawable/bgfortextview"
         android:orientation="vertical"
         android:paddingLeft="20dp"
@@ -154,16 +155,20 @@
     </LinearLayout>
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:id="@+id/imageView"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/imageview"
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="122dp"
-        android:layout_marginTop="73dp"
+        android:layout_marginTop="100dp"
         android:layout_marginEnd="139dp"
         android:background="@drawable/image_icon_proflie"
-        android:scaleType="fitCenter" />
+        app:civ_border_width="2dp"
+        android:layout_alignParentLeft="true"
+        app:civ_border_color="#00F7F4F4"
+        />
 
 </RelativeLayout>

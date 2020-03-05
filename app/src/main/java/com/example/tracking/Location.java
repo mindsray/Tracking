@@ -4,26 +4,36 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.res.ResourcesCompat;
 
+import android.view.ContextMenu;
+import android.view.Menu;
 import android.Manifest;
+import android.annotation.TargetApi;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
-import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import androidx.appcompat.widget.Toolbar;
 import com.google.android.gms.location.LocationRequest;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -45,6 +55,8 @@ import java.util.jar.Attributes;
 import de.hdodenhof.circleimageview.CircleImageView;
 import okhttp3.internal.cache.DiskLruCache;
 
+import static com.example.tracking.R.id.toolbarrrr;
+
 public class Location extends AppCompatActivity {
     private double Latitude_current;
     private double Longitude_current;
@@ -65,17 +77,31 @@ public class Location extends AppCompatActivity {
     String link ;
     private int SELECT_IMAGE = 1001;
     private int CROP_IMAGE = 2001;
+    Toolbar toolbar;
+    String uid;
 
 
-
+    //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
+//    public static void setStatusBarGradiant(Activity activity) {
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//            Window   window = activity.getWindow();
+//            //Drawable background = ResourcesCompat.getDrawable(getResources(), R.drawable.name, anotherTheme);
+//            Drawable background = ContextCompat.getDrawable(activity, R.drawable.bg_gradient);
+//            window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+//            window.setStatusBarColor(ContextCompat.getColor(activity,android.R.color.transparent));
+//            window.setNavigationBarColor(ContextCompat.getColor(activity,android.R.color.transparent));
+//            window.setBackgroundDrawable(background);
+//        }
+//    }
     // The minimum time between updates in milliseconds
     private static final long MIN_TIME_BW_UPDATES = 1000 * 5 * 1; // 1 minute
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
+
         textView = findViewById(R.id.textview_location);
         SendMessage = findViewById(R.id.Button_SendMessage);
         Logout = findViewById(R.id.Button_LogOut);
@@ -85,27 +111,19 @@ public class Location extends AppCompatActivity {
         firebaseUser = firebaseAuth.getCurrentUser();
         imageview = findViewById(R.id.imageViewProfile);
         Name = findViewById(R.id.textview_UserName);
+        Toolbar toolbar = (Toolbar) findViewById(toolbarrrr);
+        setSupportActionBar(toolbar);
+//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
 
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.baseline_more_vert_black_18dp);
+        toolbar.setOverflowIcon(drawable);
+//        getSupportActionBar().setDisplayShowTitleEnabled(false);
         EmailUser.setText(firebaseUser.getEmail());
-        String uid = firebaseUser.getUid();
+         uid = firebaseUser.getUid();
         textViewSuccess.setText("กำลังส่งตำแหน่ง...");
 
-            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-            DatabaseReference uidRef = rootRef.child("User").child(uid);
-            ValueEventListener valueEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    name = dataSnapshot.child("Name").getValue(String.class);
-                    Name.setText(name); //getnameไว้หน้าUI
-                    link = dataSnapshot.child("imageUrl").getValue(String.class);
-                    System.out.println(link);
-                    LoadImageUrl(link);
-                }
 
-                @Override
-                public void onCancelled(DatabaseError databaseError) {}
-            };
-            uidRef.addListenerForSingleValueEvent(valueEventListener);
 
 //          Userid.setText( firebaseUser.getUid());
 
@@ -128,12 +146,22 @@ public class Location extends AppCompatActivity {
         locationManager = (LocationManager) Location.this.getSystemService(Context.LOCATION_SERVICE);
         System.out.println("+ ON CREATE +");
     }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
-        getMenuInflater().inflate(R.menu.option,menu);
-        return super.onCreateOptionsMenu(menu);
+        System.out.println("menuuuu");
+        // Inflate the menu; this adds items to the action bar if it is present.
+//        Toolbar tb=(Toolbar)findViewById(toolbarrrr);
+//        tb.inflateMenu(R.menu.option);
+//        tb.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
+//            @Override
+//            public boolean onMenuItemClick(MenuItem item) {
+//                return (onOptionsItemSelected(item));
+//            }
+//        });
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.option,menu);
+//        System.out.println("menuuuu");
+        return true;
     }
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
@@ -143,7 +171,7 @@ public class Location extends AppCompatActivity {
             startActivity(profileIntent);
         }
         if (id == R.id.action_ChangePassword){
-            Intent ChangePWIntent = new Intent(Location.this , ShowProfile.class);
+            Intent ChangePWIntent = new Intent(Location.this , ChangePassword.class);
             startActivity(ChangePWIntent);
         }
         if (id == R.id.action_Logout){
@@ -151,8 +179,15 @@ public class Location extends AppCompatActivity {
             startActivity(LogoutIntent);
             finish();
         }
-
+        System.out.println("menuuuu2");
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
+        super.onCreateContextMenu(menu, v, menuInfo);
+        getMenuInflater().inflate(R.menu.option, menu);
+        System.out.println("menuuuu3");
     }
 
     private  void LoadImageUrl(String link){
@@ -292,10 +327,10 @@ public class Location extends AppCompatActivity {
                 hashMap.put("imageUrl",link);
 
                 if (Latitude_current >= 13.817000 && Latitude_current <= 13.830000){
-                    if (Longitude_current >= 100.036000 && Longitude_current < 100.045000)   {
+                    if (Longitude_current >= 100.036000 && Longitude_current < 100.0430000)   {
                     hashMap.put("latitude", Latitude_current);
                     hashMap.put("longitude", Longitude_current);
-                    hashMap.put("Status", "Online");
+                    hashMap.put("Status", "online");
                 }
                 }
                 else
@@ -305,9 +340,13 @@ public class Location extends AppCompatActivity {
 
                 reference.updateChildren(hashMap);
 
-                if (Latitude_current >= 13.817000 && Latitude_current <= 13.830000) {
-                    if (Longitude_current >= 100.036000 && Longitude_current < 100.045000) {
+                if (Latitude_current >= 13.817000 && Latitude_current <= 13.83000) {
+                    if (Longitude_current >= 100.036000 && Longitude_current < 100.043000) {
                         textViewSuccess.setText("ส่งตำแหน่งเสร็จสิ้น");
+                    }
+                    else
+                    {
+                        textViewSuccess.setText("ไม่สามารถส่งตำแหน่งได้เนื่องจากคุณไม่อยู่ในขอบเขต");
                     }
                 }
                 else
@@ -343,6 +382,22 @@ public class Location extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference uidRef = rootRef.child("User").child(uid);
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                name = dataSnapshot.child("Name").getValue(String.class);
+                Name.setText(name); //getnameไว้หน้าUI
+                link = dataSnapshot.child("imageUrl").getValue(String.class);
+                System.out.println(link);
+                LoadImageUrl(link);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        };
+        uidRef.addListenerForSingleValueEvent(valueEventListener);
         Thread t = new Thread() {
             @Override
             public void run() {

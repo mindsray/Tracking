@@ -4,13 +4,16 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-
-    android:background="@drawable/main"
     android:orientation="vertical"
     tools:context=".Location">
 
-
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarrrr"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/toolbar"
+    >
+    </androidx.appcompat.widget.Toolbar>
     <TextView
         android:id="@+id/textview_name"
         android:layout_width="148dp"
@@ -18,10 +21,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="305dp"
-
-        android:layout_marginTop="103dp"
-        android:layout_marginEnd="-43dp"
+        android:layout_marginStart="166dp"
+        android:layout_marginTop="154dp"
+        android:layout_marginEnd="95dp"
         android:text="texview" />
 
     <TextView
@@ -54,9 +56,9 @@
         android:layout_below="@+id/textview_name"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="338dp"
-        android:layout_marginTop="-102dp"
-        android:layout_marginEnd="-28dp"
+        android:layout_marginStart="179dp"
+        android:layout_marginTop="-30dp"
+        android:layout_marginEnd="131dp"
         android:text="Name" />
 
     <Button
@@ -88,9 +90,9 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="319dp"
-        android:layout_marginTop="3dp"
-        android:layout_marginEnd="17dp"
+        android:layout_marginStart="164dp"
+        android:layout_marginTop="78dp"
+        android:layout_marginEnd="172dp"
         android:background="@drawable/image_icon_proflie"
         app:civ_border_color="#00F7F4F4"
         app:civ_border_width="2dp"></de.hdodenhof.circleimageview.CircleImageView>

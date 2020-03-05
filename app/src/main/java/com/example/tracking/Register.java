@@ -1,6 +1,7 @@
 package com.example.tracking;
 
-import androidx.annotation.NonNull;
+import
+        androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -19,6 +20,7 @@ import android.provider.MediaStore;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Patterns;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.Button;
@@ -59,7 +61,6 @@ public class Register extends AppCompatActivity {
     private FirebaseAuth mAuth;
     private EditText emailUser, passwordUser, NameUser, LastNameUser, CFPasswordUser;
     private Button reg;
-    private CircleImageView imageView;
     String Name , link;
     public Uri imageUrl;
     UUID id;
@@ -75,7 +76,7 @@ public class Register extends AppCompatActivity {
     private final int PICK_IMAGE_REQUEST = 71;
     private Uri filePath;
     private String image_user = "";
-    CircleImageView CircleImageViewProfile;
+
     private int SELECT_IMAGE = 1001;
     private int CROP_IMAGE = 2001;
     private StorageReference mStorageRef;
@@ -87,7 +88,7 @@ public class Register extends AppCompatActivity {
     public String U_id;
     HashMap<String,String> hashMap = new HashMap<>();
 
-
+    CircleImageView imageview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -99,20 +100,23 @@ public class Register extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         FirebaseUser currentUser = mAuth.getCurrentUser();
 
+
             NameUser = findViewById(R.id.EditTextName);
             LastNameUser = findViewById(R.id.EditText_LastName);
             emailUser = findViewById(R.id.EditText_Email);
             passwordUser = findViewById(R.id.EditText_PassWord);
             CFPasswordUser = findViewById(R.id.EditText_CFPassWord);
             reg = findViewById(R.id.Button_Register);
-            imageView = findViewById(R.id.imageView);
-            imageView.setOnClickListener(new View.OnClickListener() {
+            imageview = findViewById(R.id.imageview);
+
+            imageview.setOnTouchListener(new View.OnTouchListener() {
                 @Override
-                public void onClick(View view) {
-                    chooseImage();
+                public boolean onTouch(View view, MotionEvent motionEvent) {
+                     chooseImage();
+
+                    return false;
                 }
             });
-
 
         reg.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -135,7 +139,7 @@ public class Register extends AppCompatActivity {
                 else{
                     if(checkPassword() && checkEmail()){
                         registerUserToFirebase();
-                        uploadImage();
+                        uploadImage11();
                         AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
                         dialog.setTitle("ลงทะเบียนสำเร็จ");
 
@@ -172,10 +176,10 @@ public class Register extends AppCompatActivity {
                 && data != null && data.getData() != null )
         {
             filePath = data.getData();
-            imageView.setImageURI(filePath);
+            imageview.setImageURI(filePath);
             try {
                 Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), filePath);
-                imageView.setImageBitmap(bitmap);
+                imageview.setImageBitmap(bitmap);
             }
             catch (IOException e)
             {
@@ -210,7 +214,6 @@ private String getExtention(Uri uri){
 
 
     private void registerUserToFirebase(){
-
 
         email= emailUser.getText().toString().trim();
         pass = passwordUser.getText().toString().trim();
@@ -279,23 +282,19 @@ private String getExtention(Uri uri){
     }
 
 
-
-    private void uploadImage() {
-        if(filePath != null)
-        {
+    private void uploadImage11() {
+        if (filePath != null) {
 
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
             progressDialog.show();
 
-            final StorageReference ref = mStorageRef.child("images/"+ id.toString());
-            ref.putFile(filePath)
+            final StorageReference reference = mStorageRef.child("images/" + id.toString());
+            reference.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-
-                            progressDialog.dismiss();
-                            ref.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                            reference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                                 @Override
                                 public void onSuccess(Uri uri) {
                                     DatabaseReference imageStroe = FirebaseDatabase.getInstance().getReference().child("User").child(U_id);
@@ -320,15 +319,15 @@ private String getExtention(Uri uri){
                         @Override
                         public void onFailure(@NonNull Exception e) {
                             progressDialog.dismiss();
-                            Toast.makeText(Register.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(Register.this, "Failed " + e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     })
                     .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                            double progress = (100.0 * taskSnapshot.getBytesTransferred() / taskSnapshot
                                     .getTotalByteCount());
-                            progressDialog.setMessage("Uploaded "+(int)progress+"%");
+                            progressDialog.setMessage("Uploaded " + (int) progress + "%");
                         }
                     });
 
