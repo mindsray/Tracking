@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.core.content.res.ResourcesCompat;
-
+import android.app.ProgressDialog;
 import android.view.ContextMenu;
 import android.view.Menu;
 import android.Manifest;
@@ -58,6 +58,7 @@ import okhttp3.internal.cache.DiskLruCache;
 import static com.example.tracking.R.id.toolbarrrr;
 
 public class Location extends AppCompatActivity {
+    private static final boolean USER_IS_GOING_TO_EXIT = true ;
     private double Latitude_current;
     private double Longitude_current;
     private TextView textView;
@@ -79,6 +80,9 @@ public class Location extends AppCompatActivity {
     private int CROP_IMAGE = 2001;
     Toolbar toolbar;
     String uid;
+    ProgressDialog pd;
+    private long backPressedTime;
+    private Toast backToast;
 
 
     //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -95,16 +99,19 @@ public class Location extends AppCompatActivity {
 //    }
     // The minimum time between updates in milliseconds
     private static final long MIN_TIME_BW_UPDATES = 1000 * 5 * 1; // 1 minute
+
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
-
-        textView = findViewById(R.id.textview_location);
+        pd = new ProgressDialog(Location.this);
+        pd.setMessage("กำลังส่งตำแหน่ง");
+        pd.show();
         SendMessage = findViewById(R.id.Button_SendMessage);
-        Logout = findViewById(R.id.Button_LogOut);
         textViewSuccess = findViewById(R.id.textview_Success);
         EmailUser = findViewById(R.id.textview_name);
         firebaseAuth = firebaseAuth.getInstance();
@@ -113,19 +120,30 @@ public class Location extends AppCompatActivity {
         Name = findViewById(R.id.textview_UserName);
         Toolbar toolbar = (Toolbar) findViewById(toolbarrrr);
         setSupportActionBar(toolbar);
-//        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.baseline_more_vert_black_18dp);
         toolbar.setOverflowIcon(drawable);
-//        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         EmailUser.setText(firebaseUser.getEmail());
-         uid = firebaseUser.getUid();
+        uid = firebaseUser.getUid();
+        String uid = firebaseUser.getUid();
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference uidRef = rootRef.child("User").child(uid);
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                name = dataSnapshot.child("Name").getValue(String.class);
+                link = dataSnapshot.child("imageUrl").getValue(String.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        };
+        uidRef.addListenerForSingleValueEvent(valueEventListener);
+
         textViewSuccess.setText("กำลังส่งตำแหน่ง...");
-
-
-
-//          Userid.setText( firebaseUser.getUid());
 
         SendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -134,30 +152,11 @@ public class Location extends AppCompatActivity {
             }
         });
 
-        Logout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                FirebaseAuth.getInstance().signOut();
-                finish();
-                startActivity(new Intent(Location.this, Login.class));
-            }
-        });
-
         locationManager = (LocationManager) Location.this.getSystemService(Context.LOCATION_SERVICE);
         System.out.println("+ ON CREATE +");
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        System.out.println("menuuuu");
-        // Inflate the menu; this adds items to the action bar if it is present.
-//        Toolbar tb=(Toolbar)findViewById(toolbarrrr);
-//        tb.inflateMenu(R.menu.option);
-//        tb.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
-//            @Override
-//            public boolean onMenuItemClick(MenuItem item) {
-//                return (onOptionsItemSelected(item));
-//            }
-//        });
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.option,menu);
 //        System.out.println("menuuuu");
@@ -175,11 +174,10 @@ public class Location extends AppCompatActivity {
             startActivity(ChangePWIntent);
         }
         if (id == R.id.action_Logout){
-            Intent LogoutIntent = new Intent(Location.this , Login.class);
-            startActivity(LogoutIntent);
-            finish();
+            FirebaseAuth.getInstance().signOut();
+            Logout();
         }
-        System.out.println("menuuuu2");
+//        System.out.println("menuuuu2");
         return super.onOptionsItemSelected(item);
     }
 
@@ -187,8 +185,22 @@ public class Location extends AppCompatActivity {
     public void onCreateContextMenu(ContextMenu menu, View v, ContextMenu.ContextMenuInfo menuInfo) {
         super.onCreateContextMenu(menu, v, menuInfo);
         getMenuInflater().inflate(R.menu.option, menu);
-        System.out.println("menuuuu3");
+//        System.out.println("menuuuu3");
     }
+
+    @Override
+    public void onBackPressed() {
+        if (backPressedTime + 1 > System.currentTimeMillis()){
+            super.onBackPressed();
+            return;
+        }
+        else {
+            Toast.makeText(getBaseContext(),"กดอีกครั้งเพื่อออก",Toast.LENGTH_LONG).show();
+        }
+        backPressedTime = System.currentTimeMillis();
+    }
+
+
 
     private  void LoadImageUrl(String link){
 
@@ -199,16 +211,24 @@ public class Location extends AppCompatActivity {
         @Override
         public void onSuccess() {
 
-            System.out.println("sssssssssssssssssssss");
+            System.out.println("Upload Image Success");
         }
         @Override
         public void onError(Exception e) {
-            System.out.println("rrrrrrrrrrrrrrrrrrrr");
+            System.out.println("Upload Image Error");
 
         }
     });
 }
-
+    private void Logout(){
+        firebaseAuth.signOut();
+        Intent intent = new Intent(Location.this, Login.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                | Intent.FLAG_ACTIVITY_CLEAR_TOP
+                | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
+    }
     private void getLocation() {
         if (ActivityCompat.checkSelfPermission
                 (Location.this, Manifest.permission.ACCESS_COARSE_LOCATION)
@@ -271,14 +291,14 @@ public class Location extends AppCompatActivity {
     protected void buildAlertMessageNoGps() {
 
         final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Please Turn ON your GPS Connection")
+        builder.setMessage("กรูณาเปิด GPS เพื่อเชื่อมต่อ")
                 .setCancelable(false)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                .setPositiveButton("ใช่", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
                         startActivity(new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS));
                     }
                 })
-                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                .setNegativeButton("ไม่", new DialogInterface.OnClickListener() {
                     public void onClick(final DialogInterface dialog, final int id) {
                         dialog.cancel();
                     }
@@ -290,24 +310,6 @@ public class Location extends AppCompatActivity {
 
         private void setLocationCurrent() {
 
-            String uid = firebaseUser.getUid();
-            DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
-            DatabaseReference uidRef = rootRef.child("User").child(uid);
-            ValueEventListener valueEventListener = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                     name = dataSnapshot.child("Name").getValue(String.class);
-                     link = dataSnapshot.child("imageUrl").getValue(String.class);
-
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {}
-            };
-            uidRef.addListenerForSingleValueEvent(valueEventListener);
-
-
-
         reference = FirebaseDatabase.getInstance().getReference("Location").child(firebaseUser.getUid());
 
 //            reference.child("User").child("name").addValueEventListener();
@@ -316,6 +318,8 @@ public class Location extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot)
             {
+                pd.dismiss();
+
                 hashMap = new HashMap<>();
                 String getemail =  firebaseUser.getEmail();
 
@@ -342,21 +346,26 @@ public class Location extends AppCompatActivity {
 
                 if (Latitude_current >= 13.817000 && Latitude_current <= 13.83000) {
                     if (Longitude_current >= 100.036000 && Longitude_current < 100.043000) {
+
                         textViewSuccess.setText("ส่งตำแหน่งเสร็จสิ้น");
                     }
                     else
                     {
+
                         textViewSuccess.setText("ไม่สามารถส่งตำแหน่งได้เนื่องจากคุณไม่อยู่ในขอบเขต");
+
                     }
                 }
                 else
                 {
+
                     textViewSuccess.setText("ไม่สามารถส่งตำแหน่งได้เนื่องจากคุณไม่อยู่ในขอบเขต");
+
                 }
             }
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                System.out.println("Can't put data ");
+                System.out.println("Can't put data");
             }
         });
             }
@@ -364,15 +373,33 @@ public class Location extends AppCompatActivity {
 
     @Override
     public void onStart() {
-
+    System.out.println(firebaseAuth.getAccessToken(true));
         super.onStart();
+        pd.show();
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference uidRef = rootRef.child("User").child(uid);
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                name = dataSnapshot.child("Name").getValue(String.class);
+                Name.setText(name); //getnameไว้หน้าUI
+                link = dataSnapshot.child("imageUrl").getValue(String.class);
+                System.out.println(link);
+                LoadImageUrl(link);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        };
+        uidRef.addListenerForSingleValueEvent(valueEventListener);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
             buildAlertMessageNoGps();
-        } else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+        }
+        else if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
                 getLocation();
             if (Latitude_current != 0 && Longitude_current != 0) {
-                setLocationCurrent();
+
             }
         }
         System.out.println("++ ON START ++ ");
@@ -382,6 +409,7 @@ public class Location extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        pd.show();
         DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
         DatabaseReference uidRef = rootRef.child("User").child(uid);
         ValueEventListener valueEventListener = new ValueEventListener() {
@@ -411,7 +439,7 @@ public class Location extends AppCompatActivity {
                                 getLocation();
                                 setLocationCurrent();
 
-                                textView.setText(Latitude_current + " " + Longitude_current);
+//                                textView.setText(Latitude_current + " " + Longitude_current);
 
                             }
                         });

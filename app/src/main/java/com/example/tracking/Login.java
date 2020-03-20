@@ -3,7 +3,9 @@ package com.example.tracking;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -15,17 +17,27 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.security.MessageDigest;
 
 public class Login extends AppCompatActivity {
-    EditText  edittext_email, edittext_password;
+    EditText edittext_email, edittext_password;
     TextView register;
     Button login;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference mDatabaseReff;
     private FirebaseDatabase db;
     private String email, pass = "";
+    private FirebaseUser firebaseUser;
+    String Showpass , Encryptpass;
+    String uid;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,10 +49,18 @@ public class Login extends AppCompatActivity {
         login = findViewById(R.id.Button_Login);
 
 
+
         register.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(Login.this, Register.class));
+            }
+
+        });
+        login.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
             }
         });
 
@@ -50,7 +70,6 @@ public class Login extends AppCompatActivity {
                 firebaseAuth = FirebaseAuth.getInstance();
                 email = edittext_email.getText().toString();
                 pass = edittext_password.getText().toString();
-
 
                 if (!email.isEmpty() && !pass.isEmpty()) {
                     firebaseAuth.signInWithEmailAndPassword(email, pass)
@@ -74,7 +93,25 @@ public class Login extends AppCompatActivity {
         });
 
     }
+    public void ShowPassword(){
+        DatabaseReference rootRef = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference uidRef = rootRef.child("User").child(firebaseUser.getUid());
+        ValueEventListener valueEventListener = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Showpass= dataSnapshot.child("Password").getValue(String.class);
+                // PasswordCurrent.setText(pass);//getnameไว้หน้าUI
+                System.out.println(Showpass);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+        };
+        uidRef.addListenerForSingleValueEvent(valueEventListener);
+    }
 }
+
 
 
 

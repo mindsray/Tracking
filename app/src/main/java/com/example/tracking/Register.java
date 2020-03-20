@@ -51,6 +51,8 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -69,7 +71,7 @@ public class Register extends AppCompatActivity {
     String pass;
     String cfpass ="";
     Task<Uri> downloadUrl;
-    String dd;
+    String newPassEncry;
     User user = new User();
     private FirebaseDatabase db;
     private DatabaseReference mDatabaseReff , getmDatabaseReff;
@@ -113,7 +115,6 @@ public class Register extends AppCompatActivity {
                 @Override
                 public boolean onTouch(View view, MotionEvent motionEvent) {
                      chooseImage();
-
                     return false;
                 }
             });
@@ -127,6 +128,7 @@ public class Register extends AppCompatActivity {
                 pass= passwordUser.getText().toString();
                 cfpass = CFPasswordUser.getText().toString();
 
+
                 if( Name.isEmpty() || lastname.isEmpty() || email.isEmpty() || pass.isEmpty()
                         || cfpass.isEmpty()
                 ){
@@ -138,6 +140,8 @@ public class Register extends AppCompatActivity {
                 }
                 else{
                     if(checkPassword() && checkEmail()){
+                        newPassEncry =  EncryptPassword(pass);
+                        System.out.println(newPassEncry);
                         registerUserToFirebase();
                         uploadImage11();
                         AlertDialog.Builder dialog = new AlertDialog.Builder(Register.this);
@@ -164,8 +168,6 @@ public class Register extends AppCompatActivity {
         intent.setType("image/*");
         intent.setAction(Intent.ACTION_GET_CONTENT);
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST);
-
-
 
     }
     @Override
@@ -235,6 +237,7 @@ private String getExtention(Uri uri){
                             hashMap.put("Name",Name);
                             hashMap.put("Last",lastname);
                             hashMap.put("email",email);
+                            hashMap.put("Password",newPassEncry);
 //                          user = new User();
                             U_id = userid;
                             System.out.println(U_id);
@@ -282,12 +285,29 @@ private String getExtention(Uri uri){
     }
 
 
+    public static String EncryptPassword (String base) {
+        try{
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            byte[] hash = digest.digest(base.getBytes("UTF-8"));
+            StringBuffer hexString = new StringBuffer();
+
+            for (int i = 0; i < hash.length; i++) {
+                String hex = Integer.toHexString(0xff & hash[i]);
+                if(hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
+            }
+            return hexString.toString();
+        } catch(Exception ex){
+            throw new RuntimeException(ex);
+        }
+    }
+
+
     private void uploadImage11() {
         if (filePath != null) {
 
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
-            progressDialog.show();
 
             final StorageReference reference = mStorageRef.child("images/" + id.toString());
             reference.putFile(filePath)

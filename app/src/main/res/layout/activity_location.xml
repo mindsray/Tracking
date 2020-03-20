@@ -14,33 +14,28 @@
         android:background="@drawable/toolbar"
     >
     </androidx.appcompat.widget.Toolbar>
-    <TextView
-        android:id="@+id/textview_name"
-        android:layout_width="148dp"
-        android:layout_height="73dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="166dp"
-        android:layout_marginTop="154dp"
-        android:layout_marginEnd="95dp"
-        android:text="texview" />
 
     <TextView
-        android:id="@+id/textview_location"
-        android:layout_width="wrap_content"
+        android:id="@+id/textview_name"
+        android:layout_width="163dp"
         android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="250dp"
-        android:text="TextView" />
+        android:layout_below="@+id/imageViewProfile"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="125dp"
+
+        android:text="texview"
+        android:textAlignment="center" />
 
     <TextView
         android:id="@+id/textview_Success"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/textview_location"
+        android:layout_below="@id/textview_name"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="100dp"
         android:text="กำลังส่งตำแหน่ง"
 
 
@@ -51,15 +46,16 @@
 
     <TextView
         android:id="@+id/textview_UserName"
-        android:layout_width="100dp"
-        android:layout_height="80dp"
+        android:layout_width="54dp"
+        android:layout_height="wrap_content"
         android:layout_below="@+id/textview_name"
         android:layout_alignParentStart="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="179dp"
-        android:layout_marginTop="-30dp"
-        android:layout_marginEnd="131dp"
-        android:text="Name" />
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="125dp"
+        android:text="Name"
+        android:textAlignment="center" />
 
     <Button
         android:id="@+id/Button_SendMessage"
@@ -72,27 +68,16 @@
 
     </Button>
 
-    <Button
-        android:id="@+id/Button_LogOut"
-        android:layout_width="150dp"
-        android:layout_height="50dp"
-        android:layout_below="@+id/Button_SendMessage"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="50dp"
-
-
-        android:background="@drawable/button_logout"></Button>
-
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/imageViewProfile"
-        android:layout_width="75dp"
-        android:layout_height="66dp"
+        android:layout_width="148dp"
+        android:layout_height="146dp"
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginStart="164dp"
-        android:layout_marginTop="78dp"
-        android:layout_marginEnd="172dp"
+        android:layout_marginStart="125dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="125dp"
         android:background="@drawable/image_icon_proflie"
         app:civ_border_color="#00F7F4F4"
         app:civ_border_width="2dp"></de.hdodenhof.circleimageview.CircleImageView>
