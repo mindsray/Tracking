@@ -89,8 +89,10 @@ public class Register extends AppCompatActivity {
     private FirebaseUser firebaseUser;
     public String U_id;
     HashMap<String,String> hashMap = new HashMap<>();
-
     CircleImageView imageview;
+
+    public Register() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -230,7 +232,7 @@ private String getExtention(Uri uri){
                             //เรียกดาต้าเบสมาใช้ vvv
                             FirebaseUser firebaseUser = mAuth.getCurrentUser();
                             assert  firebaseUser != null;
-                            final String userid = firebaseUser.getUid();
+                         final String  userid = firebaseUser.getUid();
                             mDatabaseReff = FirebaseDatabase.getInstance().getReference("User").child(userid);
 //                            HashMap<String,String> hashMap = new HashMap<>();
                             hashMap.put("id",userid);
@@ -302,14 +304,12 @@ private String getExtention(Uri uri){
         }
     }
 
-
     private void uploadImage11() {
         if (filePath != null) {
 
             final ProgressDialog progressDialog = new ProgressDialog(this);
             progressDialog.setTitle("Uploading...");
-
-            final StorageReference reference = mStorageRef.child("images/" + id.toString());
+            final StorageReference reference = mStorageRef.child("images/" + U_id);
             reference.putFile(filePath)
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override

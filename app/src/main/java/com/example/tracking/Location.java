@@ -326,7 +326,7 @@ public class Location extends AppCompatActivity {
 
 //                Register value = dataSnapshot.getValue(Register.class);
 //                name = value.Name;
-                hashMap.put("Email",getemail);
+                hashMap.put("email",getemail);
                 hashMap.put("Name",name);
                 hashMap.put("imageUrl",link);
 
