@@ -3,11 +3,14 @@ package com.example.tracking;
 import androidx.annotation.NonNull;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.Calendar;
 
 import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -27,6 +30,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import static com.example.tracking.R.id.toolbarrrr;
 
 public class Message extends AppCompatActivity {
     private EditText Message;
@@ -49,6 +53,22 @@ public class Message extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_message);
+        Toolbar toolbar = (Toolbar) findViewById(toolbarrrr);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+                // perform whatever you want on back arrow click
+            }
+        });
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.baseline_more_vert_black_18dp);
+        toolbar.setOverflowIcon(drawable);
+
         Message = findViewById(R.id.editTextMessage);
         SentMessage = findViewById(R.id.button_sentMessage);
         history = findViewById(R.id.button_History);

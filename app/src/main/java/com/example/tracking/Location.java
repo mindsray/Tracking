@@ -83,6 +83,9 @@ public class Location extends AppCompatActivity {
     ProgressDialog pd;
     private long backPressedTime;
     private Toast backToast;
+    private static final int TIME_INTERVAL = 2000; // # milliseconds, desired time passed between two back presses.
+    private long mBackPressed;
+
 
 
     //    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
@@ -105,6 +108,7 @@ public class Location extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_location);
@@ -189,15 +193,21 @@ public class Location extends AppCompatActivity {
     }
 
     @Override
-    public void onBackPressed() {
-        if (backPressedTime + 1 > System.currentTimeMillis()){
+    public void onBackPressed()
+    {
+        if (mBackPressed + TIME_INTERVAL > System.currentTimeMillis())
+        {
             super.onBackPressed();
             return;
         }
         else {
-            Toast.makeText(getBaseContext(),"กดอีกครั้งเพื่อออก",Toast.LENGTH_LONG).show();
+            Intent startMain = new Intent(Intent.ACTION_MAIN);
+            startMain.addCategory(Intent.CATEGORY_HOME);
+            startMain.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(startMain);
         }
-        backPressedTime = System.currentTimeMillis();
+
+        mBackPressed = System.currentTimeMillis();
     }
 
 
