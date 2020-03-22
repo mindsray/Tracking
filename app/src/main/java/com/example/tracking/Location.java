@@ -287,7 +287,8 @@ public class Location extends AppCompatActivity {
 
             }
                    else {
-                Toast.makeText(Location.this, "Unble to Trace your location", Toast.LENGTH_SHORT).show();
+
+                System.out.println("Unble to Trace your location");
 
             }
 
@@ -443,7 +444,7 @@ public class Location extends AppCompatActivity {
             public void run() {
                 while (!isInterrupted()) {
                     try {
-                        Thread.sleep(5000);
+                        Thread.sleep(100000);
 
                         runOnUiThread(new Runnable() {
                             @Override
