@@ -66,7 +66,8 @@
         android:layout_marginTop="100dp"
         android:background="@drawable/button_default"
         android:text="ส่งข้อความ"
-        android:textColor="#FFFFFF">
+        android:textColor="#FFFFFF"
+        android:textSize="14dp">
 
     </Button>
 

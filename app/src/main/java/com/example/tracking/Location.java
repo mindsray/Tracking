@@ -147,9 +147,9 @@ public class Location extends AppCompatActivity {
         };
         uidRef.addListenerForSingleValueEvent(valueEventListener);
 
-        textViewSuccess.setText("กำลังส่งตำแหน่ง.");
-        textViewSuccess.setText("กำลังส่งตำแหน่ง..");
+
         textViewSuccess.setText("กำลังส่งตำแหน่ง...");
+
 
         SendMessage.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -444,7 +444,7 @@ public class Location extends AppCompatActivity {
             public void run() {
                 while (!isInterrupted()) {
                     try {
-                        Thread.sleep(100000);
+                        Thread.sleep(5000);
 
                         runOnUiThread(new Runnable() {
                             @Override
