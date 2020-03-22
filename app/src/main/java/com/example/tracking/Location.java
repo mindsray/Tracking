@@ -147,6 +147,8 @@ public class Location extends AppCompatActivity {
         };
         uidRef.addListenerForSingleValueEvent(valueEventListener);
 
+        textViewSuccess.setText("กำลังส่งตำแหน่ง.");
+        textViewSuccess.setText("กำลังส่งตำแหน่ง..");
         textViewSuccess.setText("กำลังส่งตำแหน่ง...");
 
         SendMessage.setOnClickListener(new View.OnClickListener() {

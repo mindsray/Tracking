@@ -13,7 +13,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="80dp"
-        android:layout_marginTop="250dp">
+        android:layout_marginTop="280dp"
+
+        >
 
         <TextView
             android:id="@+id/textview_UserName"
@@ -28,6 +30,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/textviewLayout_UserName"
         android:layout_marginLeft="80dp"
+
         android:layout_centerHorizontal="true"
         >
 
@@ -76,7 +79,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/pass_layout"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="65dp">
+        android:layout_marginTop="60dp">
 
         <Button
             android:id="@+id/Button_Login"

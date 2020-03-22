@@ -64,7 +64,9 @@
         android:layout_below="@+id/textview_Success"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="100dp"
-        android:background="@drawable/button_sendmessage">
+        android:background="@drawable/button_default"
+        android:text="ส่งข้อความ"
+        android:textColor="#FFFFFF">
 
     </Button>
 
