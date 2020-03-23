@@ -36,7 +36,7 @@ public class HistoryMessage extends AppCompatActivity {
         list = findViewById(R.id.list);
         firebaseAuth = firebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-
+        toolbar();
         ArrayList<String> Message = getIntent().getStringArrayListExtra("Mymessage");
 //        MessageAdapter adapter = new MessageAdapter(getApplicationContext(),Message );
 
@@ -87,14 +87,14 @@ public class HistoryMessage extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-toolbar();
+
         System.out.println("++ ON START ++ ");
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        toolbar();
+
         System.out.println("+ ON RESUME +");
 
 

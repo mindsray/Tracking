@@ -41,10 +41,9 @@ public class MessageAdapter  extends  BaseAdapter{
         LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
         if(convertView == null)
-            convertView = inflater.inflate(R.layout.activity_history_message,parent,false);
+            convertView = inflater.inflate(R.layout.listview,parent,false);
         TextView textshow = convertView.findViewById(R.id.textshowMessage);
         textshow.setText(messages.get(position));
-
 
 
         return convertView;
