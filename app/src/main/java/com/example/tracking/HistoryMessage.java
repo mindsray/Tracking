@@ -48,9 +48,14 @@ public class HistoryMessage extends AppCompatActivity {
         });
         Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.baseline_more_vert_black_18dp);
         toolbar.setOverflowIcon(drawable);
+
+
+
         list = findViewById(R.id.list);
         firebaseAuth = firebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
+
+
         ArrayList<String> Message = getIntent().getStringArrayListExtra("Mymessage");
 //        MessageAdapter adapter = new MessageAdapter(getApplicationContext(),Message );
 
