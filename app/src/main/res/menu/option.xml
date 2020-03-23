@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item android:title="โปรไฟล์"
+        android:id="@+id/action_Profile"
+        app:showAsAction="never">
+    </item>
+
+    <item android:title="เปลี่ยนรหัสผ่าน"
+        android:id="@+id/action_ChangePassword"
+        app:showAsAction="never">
+    </item>
+
+    <item android:title="ออกจากระบบ"
+        android:id="@+id/action_Logout"
+        app:showAsAction="never">
+    </item>
+</menu>
