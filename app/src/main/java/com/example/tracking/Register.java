@@ -4,6 +4,8 @@ import
         androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
+import androidx.core.content.ContextCompat;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -12,6 +14,7 @@ import android.content.ActivityNotFoundException;
 import android.content.ContentResolver;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.media.Image;
 import android.net.Uri;
 import android.os.Bundle;
@@ -56,6 +59,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
+import static com.example.tracking.R.id.toolbarrrr;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -99,6 +103,21 @@ public class Register extends AppCompatActivity {
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+        Toolbar toolbar = (Toolbar) findViewById(toolbarrrr);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+                // perform whatever you want on back arrow click
+            }
+        });
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.baseline_more_vert_black_18dp);
+        toolbar.setOverflowIcon(drawable);
         mStorageRef = FirebaseStorage.getInstance().getReference("Images");
         id = UUID.randomUUID();
         mAuth = FirebaseAuth.getInstance();

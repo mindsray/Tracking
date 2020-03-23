@@ -371,9 +371,7 @@ public class Location extends AppCompatActivity {
                 }
                 else
                 {
-
                     textViewSuccess.setText("ไม่สามารถส่งตำแหน่งได้เนื่องจากคุณไม่อยู่ในขอบเขต");
-
                 }
             }
             @Override

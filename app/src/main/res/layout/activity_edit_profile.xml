@@ -4,9 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
-    android:orientation="vertical"
-    tools:context=".Register">
+    tools:context=".EditProfile">
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbarrrr"
         android:layout_width="match_parent"
@@ -14,18 +12,35 @@
         android:background="@drawable/toolbar"
         >
     </androidx.appcompat.widget.Toolbar>
+    <de.hdodenhof.circleimageview.CircleImageView
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/imageView"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginStart="130dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="130dp"
+        android:background="@drawable/image_icon_proflie"
+        app:civ_border_width="2dp"
+        android:layout_alignParentLeft="true"
+        app:civ_border_color="#00F7F4F4"
+        />
 
     <LinearLayout
         android:id="@+id/LayoutName"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/imageview"
+        android:layout_below="@+id/imageView"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="40dp"
         android:background="@drawable/bgfortextview"
         android:orientation="vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp">
+
 
         <EditText
             android:id="@+id/EditTextName"
@@ -34,7 +49,8 @@
             android:layout_centerHorizontal="true"
             android:hint="ชื่อ"
 
-            android:inputType="textPersonName" />
+            android:inputType="textPersonName"
+            android:textSize="18sp" />
     </LinearLayout>
 
     <LinearLayout
@@ -56,7 +72,8 @@
             android:layout_height="match_parent"
             android:layout_centerHorizontal="true"
             android:layout_gravity="center"
-            android:hint="นามสกุล">
+            android:hint="นามสกุล"
+            android:textSize="18sp">
 
         </EditText>
     </LinearLayout>
@@ -81,100 +98,39 @@
             android:hint="อีเมล"
             android:inputType="textEmailAddress"
 
-            >
+            android:textSize="18sp">
 
 
         </EditText>
     </LinearLayout>
 
-    <LinearLayout
-        android:id="@+id/LayoutPassword"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/LayoutEmail"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/bgfortextview"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
 
-
-        <EditText
-            android:id="@+id/EditText_PassWord"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:hint="รหัสผ่าน">
-
-        </EditText>
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/LayoutPasswordConfirm"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/LayoutPassword"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="25dp"
-        android:background="@drawable/bgfortextview"
-        android:orientation="vertical"
-        android:paddingLeft="20dp"
-        android:paddingRight="20dp">
-
-
-        <EditText
-            android:id="@+id/EditText_CFPassWord"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
-            android:hint="ยืนยันรหัสผ่าน">
-
-        </EditText>
-    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/LayoutReg"
         android:layout_width="300dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/LayoutPasswordConfirm"
+        android:layout_below="@id/LayoutEmail"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="40dp"
         android:orientation="vertical"
         android:paddingLeft="20dp"
         android:paddingRight="20dp">
 
-        <Button
-            android:id="@+id/Button_Register"
-            android:layout_width="150dp"
-            android:layout_height="50dp"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="center"
+    <Button
+        android:id="@+id/Button_Update"
+        android:layout_width="150dp"
+        android:layout_height="50dp"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center"
 
 
-            android:background="@drawable/button_register">
-
-
-        </Button>
+        android:background="@drawable/button_default"
+        android:text="อัพเดตข้อมูล"
+        android:textColor="#FFFFFF"
+        >
+    </Button>
     </LinearLayout>
 
-    <de.hdodenhof.circleimageview.CircleImageView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/imageview"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginStart="122dp"
-        android:layout_marginTop="100dp"
-        android:layout_marginEnd="139dp"
-        android:background="@drawable/image_icon_proflie"
-        app:civ_border_width="2dp"
-        android:layout_alignParentLeft="true"
-        app:civ_border_color="#00F7F4F4"
-        />
 
 </RelativeLayout>
