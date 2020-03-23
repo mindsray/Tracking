@@ -33,28 +33,9 @@ public class HistoryMessage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_history_message);
-        Toolbar toolbar = (Toolbar) findViewById(toolbarrrr);
-
-        setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-//        getSupportActionBar().setDisplayShowHomeEnabled(true);
-
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-                // perform whatever you want on back arrow click
-            }
-        });
-        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.baseline_more_vert_black_18dp);
-        toolbar.setOverflowIcon(drawable);
-
-
-
         list = findViewById(R.id.list);
         firebaseAuth = firebaseAuth.getInstance();
         firebaseUser = firebaseAuth.getCurrentUser();
-
 
         ArrayList<String> Message = getIntent().getStringArrayListExtra("Mymessage");
 //        MessageAdapter adapter = new MessageAdapter(getApplicationContext(),Message );
@@ -82,4 +63,59 @@ public class HistoryMessage extends AppCompatActivity {
 
 
     }
+
+
+    private void toolbar(){
+
+        Toolbar toolbar = (Toolbar) findViewById(toolbarrrr);
+
+        setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+//        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onBackPressed();
+                // perform whatever you want on back arrow click
+            }
+        });
+        Drawable drawable = ContextCompat.getDrawable(getApplicationContext(),R.drawable.baseline_more_vert_black_18dp);
+        toolbar.setOverflowIcon(drawable);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+toolbar();
+        System.out.println("++ ON START ++ ");
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        toolbar();
+        System.out.println("+ ON RESUME +");
+
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        System.out.println("- ON PAUSE -");
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        System.out.println("-- ON STOP -- ");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        System.out.println("- ON DESTROY - ");
+    }
+
 }
